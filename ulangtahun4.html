@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surat Cinta Untukmu 💌</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #fff;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  h1 {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    color: #ff4d6d;
+  }
+
+  /* Game Section */
+  #game {
+    margin-top: 30px;
+  }
+
+  #game h2 {
+    margin-top: 20px;
+    margin-bottom: 50px;
+    font-size: 26px;
+    color: #ff4d79;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+
+  #letters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 30px 0;
+  }
+
+  .letter {
+    width: 60px;
+    height: 60px;
+    background-color: #ffd6e0;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff4d6d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    user-select: none;
+  }
+
+  #slots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .slot {
+    width: 60px;
+    height: 60px;
+    border: 2px dashed #ffb3c1;
+    border-radius: 10px;
+    background-color: #fff0f3;
+  }
+
+  #message {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+  }
+
+  /* Foto & surat */
+  #surat {
+    display: none;
+    margin-top: 40px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #surat img {
+    width: 60%;
+    max-width: 180px;
+    border-radius: 12px;
+    margin: 0 auto 10px auto;
+    display: block;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+
+
+  #surat p {
+    margin-top: 15px;
+    color: #444;
+    font-size: 16px;
+  }
+
+  /* Animasi hati */
+  .heart {
+    position: fixed;
+    color: #ff4d6d;
+    font-size: 20px;
+    animation: floatUp 4s linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-200px) scale(0.5); opacity: 0; }
+  }
+
+  /* Pesawat kertas */
+  .plane {
+    position: fixed;
+    right: -100px;
+    top: 60%;
+    font-size: 24px;
+    transform: rotate(15deg);
+    animation: fly 5s linear forwards;
+  }
+
+  @keyframes fly {
+    0% { right: -100px; top: 60%; }
+    100% { right: 110%; top: 10%; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Susun kata rahasia ini 😘</h1>
+
+<div id="game">
+  <div id="letters"></div>
+  <div id="slots"></div>
+  <div id="message"></div>
+</div>
+
+<div id="surat">
+  <img src="withpitri.jpg" alt="Foto Kita">
+  <p>Untuk seseorang yang selalu aku rindukan 💕<br><br>
+  Terima kasih sudah jadi bagian terindah di hidupku. Kamu adalah alasanku tersenyum setiap hari 🥰</p>
+</div>
+
+<script>
+  const lettersContainer = document.getElementById("letters");
+  const slotsContainer = document.getElementById("slots");
+  const message = document.getElementById("message");
+  const surat = document.getElementById("surat");
+
+  const word = "ILOVEYOU".split('');
+  const shuffled = [...word].sort(() => 0.5 - Math.random());
+
+  shuffled.forEach(letter => {
+    const div = document.createElement("div");
+    div.className = "letter";
+    div.textContent = letter;
+    div.draggable = true;
+    div.addEventListener("dragstart", dragStart);
+    lettersContainer.appendChild(div);
+  });
+
+  word.forEach(() => {
+    const slot = document.createElement("div");
+    slot.className = "slot";
+    slot.addEventListener("dragover", dragOver);
+    slot.addEventListener("drop", drop);
+    slotsContainer.appendChild(slot);
+  });
+
+  let draggedLetter = null;
+
+  function dragStart(e) {
+    draggedLetter = e.target;
+  }
+
+  function dragOver(e) {
+    e.preventDefault();
+  }
+
+  function drop(e) {
+    e.preventDefault();
+    if (e.target.classList.contains("slot") && !e.target.textContent) {
+      e.target.textContent = draggedLetter.textContent;
+      draggedLetter.style.visibility = "hidden";
+      checkWord();
+    }
+  }
+
+  function checkWord() {
+    const filled = Array.from(document.querySelectorAll(".slot")).map(s => s.textContent).join('');
+    if (filled === word.join('')) {
+      message.textContent = "Yeay! Kamu berhasil 💖";
+      showHearts();
+      showPlane();
+      setTimeout(() => {
+        surat.style.display = "block";
+        message.textContent = "";
+      }, 2000);
+    }
+  }
+
+  function showHearts() {
+    for (let i = 0; i < 15; i++) {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "💖";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.top = window.innerHeight + "px";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 4000);
+    }
+  }
+
+  function showPlane() {
+    const plane = document.createElement("div");
+    plane.className = "plane";
+    plane.textContent = "🕊️";
+    document.body.appendChild(plane);
+    setTimeout(() => plane.remove(), 5000);
+  }
+</script>
+</body>
+</html>
